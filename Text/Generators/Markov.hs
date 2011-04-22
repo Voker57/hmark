@@ -1,6 +1,5 @@
 module Text.Generators.Markov
-	(	train
-		, trainFromStdin
+	(	trainFromStdin
 		, burstFromStdin
 		, build
 		, openDBs
@@ -24,7 +23,8 @@ import System.Random
 -- | Databases set
 type DBS = (BDB, BDB)
 
--- | Open databases with given basename
+-- | Opens databases with given basename
+openDBs :: String -> IO DBS
 openDBs base = do
 	db <- new
 	rdb <- new
@@ -32,10 +32,12 @@ openDBs base = do
 	open rdb (base ++ "_r.db") [OREADER, OWRITER, OCREAT]
 	return (db, rdb)
 
--- | Close databases
+-- | Closes databases
+closeDBs :: DBS -> IO ()
 closeDBs (db, rdb) = do
 	close db
 	close rdb
+	return ()
 
 randomEntry lst = do
 	num <- randomRIO (0, length lst - 1)
@@ -120,7 +122,8 @@ riff (db, rdb) sentence = do
 				else
 				trySimilar rdb ssentence
 	
--- | Read newline-separated lines from STDIN and reply to STDOUT
+-- | Reads newline-separated lines from STDIN and replies to STDOUT
+burstFromStdin :: DBS -> IO ()
 burstFromStdin (db, rdb) = catch (do
 	line <- hGetLine stdin
 	resM <- riff (db, rdb) $ words line
