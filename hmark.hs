@@ -14,15 +14,11 @@ printHelpAndDie = do
 main = do
 	args <- getArgs
 	when (length args < 2) (printHelpAndDie)
-	db <- new
-	rdb <- new
-	open db (head args ++ ".db") [OREADER, OWRITER, OCREAT]
-	open rdb (head args ++ "_r.db") [OREADER, OWRITER, OCREAT]
+	dbs <- openDBs (head args)
 	case args !! 1 of
 		"train" -> do
-			trainFromStdin (db, rdb)
+			trainFromStdin dbs
 		"burst" -> do
-			burstFromStdin (db, rdb)
+			burstFromStdin dbs
 		otherwise -> printHelpAndDie
-	close db
-	close rdb
+	closeDBs dbs

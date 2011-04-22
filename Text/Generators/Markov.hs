@@ -4,6 +4,7 @@ module Text.Generators.Markov
 		, burstFromStdin
 		, build
 		, openDBs
+		, closeDBs
 		, riff
 		, DBS(..)
 	)
@@ -23,7 +24,18 @@ import System.Random
 -- | Databases set
 type DBS = (BDB, BDB)
 
-openDBs = undefined
+-- | Open databases with given basename
+openDBs base = do
+	db <- new
+	rdb <- new
+	open db (base ++ ".db") [OREADER, OWRITER, OCREAT]
+	open rdb (base ++ "_r.db") [OREADER, OWRITER, OCREAT]
+	return (db, rdb)
+
+-- | Close databases
+closeDBs (db, rdb) = do
+	close db
+	close rdb
 
 randomEntry lst = do
 	num <- randomRIO (0, length lst - 1)
