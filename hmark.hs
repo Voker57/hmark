@@ -4,7 +4,7 @@ import Database.TokyoCabinet.BDB
 import System.Environment
 
 printHelpAndDie = do
-	putStrLn "Usage: hmark <basename> learn"
+	putStrLn "Usage: hmark <basename> train"
 	putStrLn "Fills database with phrases from STDIN, separated by newlines"
 	putStrLn "       hmark <basename> burst"
 	putStrLn "Reads phrases from STDIN and replies to them is possible"
